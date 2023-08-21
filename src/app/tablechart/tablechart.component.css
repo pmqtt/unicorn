@@ -1,0 +1,161 @@
+Label {
+  border-width: 2px;
+  border-color: black;
+  vertical-align: middle;
+  text-align: center;
+  padding: 10;
+}
+
+.booked {
+  background-color: #4CAF50;  /* Grün */
+  border-color: transparent;  /* Entferne die Trennlinien für gebuchte Stunden */
+}
+/*
+.within-session {
+  background-color: #C8E6C9;  /* Ein hellerer Grün für die ausgewählte Session */
+/*  border-color: transparent;  /* Entferne die Trennlinien für die ausgewählte Session */
+/*}
+
+.last-in-session{
+    border-right-color: black;  /* Füge eine Trennlinie am Ende der Session ein */
+/*    border-width: 2px;
+}*/
+
+
+.page {
+    background-color: #f6f6f6;
+}
+
+/* Stil für den Buchungstisch */
+.booking-table {
+    border-collapse: collapse;
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;  /* Dies sorgt dafür, dass das border-radius in Verbindung mit den Zellen funktioniert */
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Stil für Kopfzeilen */
+.booking-table thead th {
+    background-color: #2c3e50;
+    color: #ffffff;
+    padding: 10px;
+    text-align: left;
+    font-weight: bold;
+}
+
+/* Stil für Tabellenzellen */
+.booking-table td {
+    padding: 15px 10px;
+    border-right: 1px solid #e7e7e7;
+    border-bottom: 1px solid #e7e7e7;
+}
+
+.booking-table td:last-child {
+    border-right: none;  /* Entfernt den rechten Rand für die letzte Zelle */
+}
+
+.booking-table tr:last-child td {
+    border-bottom: none;  /* Entfernt den unteren Rand für die letzte Zelle */
+}
+
+/* Stil für gebuchte Zeiten */
+.booking-table .booked {
+    background-color: #2c3e50;
+    color: #ffffff;
+    cursor: pointer;/* Zeigt an, dass die Zelle anklickbar ist */
+    border-color: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* Stil für freie Zeiten */
+.booking-table .free {
+    background-color: #ecf0f1;
+    cursor: pointer;  /* Zeigt an, dass die Zelle anklickbar ist */
+}
+
+/* Optional: Hover-Effekt für anklickbare Zeiten */
+.booking-table .booked:hover,
+.booking-table .free:hover {
+    background-color: #95a5a6;
+}
+
+/* Tischnummer Stil */
+.tischnummer {
+    font-weight: bold;
+    background-color: #e74c3c;
+    color: #ffffff;
+}
+
+.booking-table .within-session {
+    background-color: #3498db; /* blau, ähnlich der 'booked' Klasse */
+    color: #ffffff;           /* weißer Text */
+    cursor: pointer;          /* anklickbar */
+    border: none;
+}
+
+/* Für die letzte Zelle in einer Buchungssession */
+.booking-table .last-in-session {
+    cursor: pointer;
+    border-right-color: #e74c3c; /* roter Rand rechts, um das Ende zu markieren */
+    border-left: none;
+    border-top: none;
+    border-bottom: none;
+    border-right: 2px solid; /* roter Rand unten, um das Ende zu markieren */
+}
+
+/* Optional: Hover-Effekt */
+.booking-table .within-session:hover,
+.booking-table .last-in-session:hover {
+    background-color: #95a5a6; /* grau, wie der allgemeine Hover-Effekt */
+}
+
+/* Style for cells within a booking period but not at the start or end */
+.booking-table .within-session-middle {
+    border: 0;
+    border-color:transparent;
+}
+
+/* Optional: Hover effect for cells within a booking period */
+.booking-table .within-session-middle:hover {
+    background-color: #95a5a6; /* gray, like the general hover effect */
+}
+
+
+.datetime-container {
+  direction: ltr;
+  horizontal-align: center;
+  vertical-align: middle;
+  spacing: 2;
+}
+
+.date-label {
+  background-color: transparent;
+  border-color: transparent;
+  margin-right: 0px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.next-day-button {
+  background-color: transparent;
+  color: #007BFF; /* Sie können die Farbe nach Ihren Wünschen ändern */
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+}
+
+.current-time-line {
+  background-color: transparent;
+  border-color: green;
+  border-left: 2px dashed green;
+  width: 2;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  z-index: 1000;
+}

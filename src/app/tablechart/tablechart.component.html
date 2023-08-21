@@ -1,0 +1,44 @@
+<StackLayout class="page">
+    <GridLayout columns="auto, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *" rows="auto, *, *, *, *, * ,*,*,*,*,*,*,*,*,*,*" class="booking-table">
+    <!--<Label text="" width=200px col="0" row="0"></Label>-->
+        <StackLayout orientation="horizontal" col="0" row="0" width=200px class='datetime-container' >
+            <Button text="<" font-weight='bold' font-size='15px' (tap)="goToNextDay()" width="40px" class='next-day-button'></Button>
+            <Label [text]='getFormattedDate()'  class='date-label' width='120px'></Label>
+            <Button text=">" font-weight='bold' font-size='15px' (tap)="goToNextDay()" width="40px" class='next-day-button'></Button>
+        </StackLayout>
+
+        <ng-container *ngFor="let hour of hours">
+            <Label [text]="hour.desc" col="{{hour.index+1}}" row="0" class="booking-table thead th"></Label>
+            <Label *ngIf="getCurrentHour(hour)" col="1" [rowSpan]="tables.length + 1" class="current-time-line"></Label>
+        </ng-container>
+
+        <!-- Tische und Buchungsdaten -->
+        <ng-container *ngFor="let table of tables; let rowIndex = index">
+            <Label [text]="'Tisch ' + table" col="0" row="{{rowIndex + 1}}" class="tischnummer"></Label>
+
+            <!-- Buchungsdaten je Tisch - hier könnten Sie prüfen, ob eine Buchung für diese Stunde vorliegt und die Zelle entsprechend gestalten -->
+            <ng-container *ngFor="let hour of hours">
+                <ng-container *ngIf="isNotCovered(table, hour)">
+                <Label
+                    [text]="getBookingData(table, hour)"
+                    [attr.colspan]="getBookingDuration(table, hour)"
+                    col="{{hour.index + 1}}"
+                    row="{{rowIndex + 1}}"
+                    (longPress)="startBooking(table, hour)"
+                    (tap)="endBooking(table, hour)"
+                    class = "booking-table td"
+                    [ngClass]="{
+                    'booked': isBooked(table, hour),
+                    'freed': !isBooked(table, hour),
+                    'within-session-middle': isWithinBookingSessionMiddle(table, hour),
+                    'within-session': isWithinBookingSession(table, hour),
+                    'last-in-session': getBookingDuration(table, hour) > 1,
+                }">
+                </Label>
+                </ng-container>
+            </ng-container>
+        </ng-container>
+    </GridLayout>
+</StackLayout>
+
+

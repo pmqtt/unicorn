@@ -1,0 +1,51 @@
+
+/* Grundlegender Stil für den Container */
+GridLayout {
+    padding: 20;
+    border-radius: 8;
+    background-color: #ffffff;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Stil für Textfelder */
+TextField {
+    margin-bottom: 16;
+    padding: 10;
+    border-width: 1;
+    border-color: #dcdcdc;
+    border-radius: 5;
+    font-size: 16;
+}
+
+/* Stil für den Hover-Effekt der Textfelder (falls unterstützt) */
+TextField:hover {
+    border-color: #b5b5b5;
+}
+
+/* Stil für die Buttons */
+Button {
+    margin-top: 10;
+    padding: 10 20;
+    border-radius: 5;
+    font-size: 16;
+    color: #ffffff; /* Textfarbe */
+}
+
+/* Stil für den Abbrechen-Button */
+Button[text="Abbrechen"] {
+    background-color: #e74c3c; /* Roter Hintergrund */
+}
+
+/* Stil für den Speichern-Button */
+Button[text="Speichern"] {
+    background-color: #2ecc71; /* Grüner Hintergrund */
+}
+
+Button[text="Entfernen"]{
+    background-color: #f1c40f;
+}
+
+/* Stil für den Hover-Effekt der Buttons (falls unterstützt) */
+Button:hover {
+    opacity: 0.8;
+}
