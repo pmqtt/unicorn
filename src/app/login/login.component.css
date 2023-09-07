@@ -1,0 +1,19 @@
+.form {
+    padding: 20px;
+    vertical-align: middle;
+}
+
+.input {
+    margin-bottom: 15px;
+    height: 80px;
+    border-width: 1px;
+    border-color: #d1d1d1;
+    border-radius: 5px;
+    padding-left: 8px;
+}
+
+.btn {
+    background-color: #007aff;
+    color: #ffffff;
+    border-radius: 5px;
+}
