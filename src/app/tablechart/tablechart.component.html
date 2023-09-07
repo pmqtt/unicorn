@@ -2,7 +2,7 @@
     <GridLayout columns="auto, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *" rows="auto, *, *, *, *, * ,*,*,*,*,*,*,*,*,*,*" class="booking-table">
     <!--<Label text="" width=200px col="0" row="0"></Label>-->
         <StackLayout orientation="horizontal" col="0" row="0" width=200px class='datetime-container' >
-            <Button text="<" font-weight='bold' font-size='15px' (tap)="goToNextDay()" width="40px" class='next-day-button'></Button>
+            <Button text="<" font-weight='bold' font-size='15px' (tap)="goToPrevDay()" width="40px" class='next-day-button'></Button>
             <Label [text]='getFormattedDate()'  class='date-label' width='120px'></Label>
             <Button text=">" font-weight='bold' font-size='15px' (tap)="goToNextDay()" width="40px" class='next-day-button'></Button>
         </StackLayout>

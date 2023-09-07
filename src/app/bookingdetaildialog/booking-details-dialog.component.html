@@ -1,11 +1,13 @@
-<GridLayout columns="*, *, *" rows="*, auto, auto">
-    <TextField [(ngModel)]="customerName" hint="Kundenname" colSpan="3" row="0" class="input-field"></TextField>
+<GridLayout columns="auto, auto, auto, auto, auto" rows="*, auto, auto">
+    <TextField [(ngModel)]="customerName" hint="Kundenname" colSpan="5" row="0" class="input-field"></TextField>
 
-    <TextField [(ngModel)]="customerCount" hint="Anzahl Personen" colSpan="3" row="1" class="input-field" keyboardType="number"></TextField>
+    <TextField [(ngModel)]="customerCount" hint="Anzahl Personen" colSpan="5" row="1" class="input-field" keyboardType="number"></TextField>
 
     <!-- Weitere Felder können hier hinzugefügt werden -->
 
-    <Button text="Abbrechen" (tap)="close(false)" col="0" row="2" class="cancel-btn"></Button>
+    <Button text="Abbrechen" (tap)="close(false)" col="0" row="2" ></Button>
     <Button text="Entfernen" (tap)="remove()" col="1" row="2" class="remove-btn"></Button>
     <Button text="Speichern" (tap)="close(true)" col="2" row="2" class="save-btn"></Button>
+    <Button text="Begin" (tap)="close(true)" col="3" row="2" class="begin-btn"></Button>
+    <Button text="Ende" (tap)="close(true)" col="4" row="2" class="end-btn"></Button>
 </GridLayout>

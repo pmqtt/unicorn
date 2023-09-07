@@ -1,16 +1,9 @@
 import { Component, OnInit,ViewContainerRef } from "@angular/core";
 import { ModalDialogService, ModalDialogOptions } from '@nativescript/angular';
 import { BookingDetailsDialogComponent } from '../bookingdetaildialog/booking-details-dialog.component';
-
-
-class TimeData{
-  desc: string;
-  index : number;
-  constructor(desc: string, index: number){
-    this.desc = desc;
-    this.index = index;
-  }
-}
+import { Chunck, Cell } from '../lib/chunk.lib';
+import { TimeData, createTimeData } from '../lib/time-data.lib';
+import * as appSettings from '@nativescript/core/application-settings';
 
 const time_data = [ new TimeData("08:00", 0), new TimeData("09:00", 1), new TimeData("10:00", 2),
                   new TimeData("11:00", 3), new TimeData("12:00", 4), new TimeData("13:00", 5),
@@ -21,73 +14,6 @@ const time_data = [ new TimeData("08:00", 0), new TimeData("09:00", 1), new Time
                   new TimeData("02:00", 18), new TimeData("03:00", 19), new TimeData("04:00", 20),
                   new TimeData("05:00", 21)];
 
-type Cell = {
-  table: string;
-  time: TimeData;
-}
-function createTimeData(startTime: string, endTime: string, min: number): TimeData[] {
-    let result = [];
-    let start = startTime.split(":");
-    let end = endTime.split(":");
-    let startHour = parseInt(start[0]);
-    let startMin = parseInt(start[1]);
-    let endHour = parseInt(end[0]);
-    let endMin = parseInt(end[1]);
-    let index = 0;
-    while (startHour != endHour || startMin != endMin || index == 0) {
-        // Format the time and push to result
-        result.push(new TimeData(`${startHour.toString().padStart(2, '0')}:${startMin.toString().padStart(2, '0')}`, index));
-
-        // Increment time
-        startMin += min;
-        if (startMin >= 60) {
-            startHour++;
-            startMin %= 60;
-        }
-        if (startHour > 23) {
-            startHour = 0;
-        }
-
-        index++;
-    }
-    return result;
-}
-
-class Chunck{
-  start: Cell;
-  end: Cell;
-  customerName: string = "";
-  customerCount: number = 0;
-
-  constructor(start: Cell, end: Cell){
-    this.start = start;
-    this.end = end;
-  }
-
-  changeEnd(end: Cell):void{
-    this.end = end;
-  }
-
-  startCell(): Cell{
-    return this.start;
-  }
-
-  endCell(): Cell{
-    return this.end;
-  }
-
-  in(cell: Cell): boolean{
-    if(cell === undefined || cell == null){
-      return false;
-    }
-    if(cell.table == this.start.table && cell.table == this.end.table){
-      if(cell.time.index >= this.start.time.index && cell.time.index <= this.end.time.index){
-        return true;
-      }
-    }
-    return false;
-  }
-}
 
 @Component({
   selector: "tablechart",
@@ -104,6 +30,15 @@ export class TableChartComponent implements OnInit {
   currentTime: string;
 
   constructor(private modalService: ModalDialogService, private vcRef: ViewContainerRef) {
+    let x = appSettings.getString("bookings");
+    if( x !== undefined){
+      let y = JSON.parse(x);
+      for (let key in y){
+        let start: Cell = {table: y[key].start.table, time: new TimeData(y[key].start.time.desc,y[key].start.time.index)};
+        let end: Cell = {table: y[key].end.table, time: new TimeData(y[key].end.time.desc,y[key].end.time.index)};
+        this.bookings[key] = new Chunck(start,end,y[key]['customerName'],y[key]['customerCount']);
+      }
+    }
   }
 
   ngOnInit(): void {
@@ -120,6 +55,10 @@ export class TableChartComponent implements OnInit {
     this.updateTime();
   }
 
+  goToPrevDay() {
+    this.currentDate.setDate(this.currentDate.getDate() - 1);
+    this.updateTime();
+  }
 
   startBooking(table: string, time: TimeData) {
     this.bookingStartCell = {table: table, time: time};
@@ -166,14 +105,18 @@ export class TableChartComponent implements OnInit {
             if(result.actionRemove){
               delete this.bookings[this.hashCell(chunk.startCell())];
             }
+            appSettings.remove("bookings");
+            appSettings.setString("bookings", JSON.stringify(this.bookings));
           }
         });
   }
 
   isBooked(table: string, hour: TimeData): boolean {
     for(const key in this.bookings){
-      if(this.bookings[key].in({table: table, time: hour})){
-        return true;
+      if(key.includes(this.getFormattedDate())){
+        if(this.bookings[key].in({table: table, time: hour})){
+          return true;
+        }
       }
     }
     return false;
@@ -235,13 +178,15 @@ export class TableChartComponent implements OnInit {
     if(cell == null){
       return "";
     }
-    return `${cell.table}-${cell.time.index}`;
+    return `${cell.table}-${cell.time.index}` + this.getFormattedDate();
   }
 
   findChunk(cell: Cell): Chunck | null{
     for(const key in this.bookings){
-      if(this.bookings[key].in(cell)){
-        return this.bookings[key];
+      if(key.includes(this.getFormattedDate())){
+        if(this.bookings[key].in(cell)){
+          return this.bookings[key];
+        }
       }
     }
     return null;
@@ -250,14 +195,16 @@ export class TableChartComponent implements OnInit {
   findLeftChunk(cell: Cell): Chunck | null{
     let maxChunk: Chunck = null;
     for (const key in this.bookings) {
-      if (!this.bookings[key].in(cell) && this.bookings[key].endCell().table === cell.table) {
-        let possibleChunk = this.bookings[key];
-        if(possibleChunk.endCell().time.index < cell.time.index){
-          if(maxChunk === null){
-            maxChunk = possibleChunk;
-          }else{
-            if(maxChunk.endCell().time.index > possibleChunk.startCell().time.index){
+      if( key.includes(this.getFormattedDate())){
+        if (!this.bookings[key].in(cell) && this.bookings[key].endCell().table === cell.table) {
+          let possibleChunk = this.bookings[key];
+          if(possibleChunk.endCell().time.index < cell.time.index){
+            if(maxChunk === null){
               maxChunk = possibleChunk;
+            }else{
+              if(maxChunk.endCell().time.index > possibleChunk.startCell().time.index){
+                maxChunk = possibleChunk;
+              }
             }
           }
         }
@@ -269,14 +216,16 @@ export class TableChartComponent implements OnInit {
   findRightChunk(cell: Cell): Chunck | null{
     let maxChunk: Chunck = null;
     for (const key in this.bookings) {
-      if (!this.bookings[key].in(cell) && this.bookings[key].startCell().table === cell.table) {
-        let possibleChunk = this.bookings[key];
-        if(possibleChunk.startCell().time.index > cell.time.index){
-          if(maxChunk === null){
-            maxChunk = possibleChunk;
-          }else{
-            if(maxChunk.startCell().time.index < possibleChunk.startCell().time.index){
+      if( key.includes(this.getFormattedDate())){
+        if (!this.bookings[key].in(cell) && this.bookings[key].startCell().table === cell.table) {
+          let possibleChunk = this.bookings[key];
+          if(possibleChunk.startCell().time.index > cell.time.index){
+            if(maxChunk === null){
               maxChunk = possibleChunk;
+            }else{
+              if(maxChunk.startCell().time.index < possibleChunk.startCell().time.index){
+                maxChunk = possibleChunk;
+              }
             }
           }
         }
@@ -344,9 +293,7 @@ export class TableChartComponent implements OnInit {
   getCurrentHour(hour: TimeData) : boolean{
     const hh = hour.desc.split(":")[0];
     //get the current hour in local Format
-    console.log(hh);
-    if(hh === "16"){
-      console.log("true");
+    if(hh === this.currentDate.getHours().toString()){
       return true;
     }
     return false;

@@ -45,7 +45,21 @@ Button[text="Entfernen"]{
     background-color: #f1c40f;
 }
 
+Button[text="Begin"]{
+    background-color: #3498db;
+}
+
+Button[text="Ende"]{
+    background-color: #3498db;
+}
+
 /* Stil für den Hover-Effekt der Buttons (falls unterstützt) */
 Button:hover {
     opacity: 0.8;
 }
+
+.fas{
+    font-family: 'Font Awesome 6 Free','fa-solid-900';
+    font-weight: 400;
+}
+
